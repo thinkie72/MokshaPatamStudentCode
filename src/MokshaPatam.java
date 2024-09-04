@@ -29,6 +29,7 @@ public class MokshaPatam {
         int[] numRolls = new int[boardsize];
         for (int i = 0; i < boardsize; i++) {
             numRolls[i] = -1;
+
         }
         int node;
         int row;
