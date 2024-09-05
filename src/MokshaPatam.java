@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -26,50 +27,42 @@ public class MokshaPatam {
 //        If any of them are unvisited, add them to the back of the queue
         Queue<Integer> q = new LinkedList<Integer>();
         q.add(1);
-        int[] numRolls = new int[boardsize];
-        for (int i = 0; i < boardsize; i++) {
-            numRolls[i] = -1;
-
+        boolean[] visited = new boolean[boardsize + 1];
+        int[] rolls = new int[boardsize];
+        int[] snl = new int[boardsize + 1];
+        Arrays.fill(rolls, -1);
+        for (int i = 0; i < snakes[0].length; i++) {
+            for (int j = 0; j < snakes.length; j++) {
+                snl[i] = j;
+            }
         }
+        for (int i = 0; i < ladders[0].length; i++) {
+            for (int j = 0; j < ladders.length; j++) {
+                snl[i] = j;
+            }
+        }
+
+        int currentNode;
         int node;
-        int row;
-        int col;
-        int temp;
+        int moves = 1;
         // Continues to add nodes onto the queue until one path reaches the end
         while (!q.isEmpty()) {
-            node = q.remove();
-            if (node == boardsize + 1) {
-                return moves;
+            currentNode = q.remove();
+            visited[currentNode] = true;
+            if (currentNode == boardsize) {
+                return rolls[0];
             }
-            // North
-            if (isInBounds(row - 1, col) && maze.isValidCell(row - 1, col)) {
-                temp = maze.getCell(row - 1, col);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // East
-            if (isInBounds(row, col + 1) && maze.isValidCell(row, col + 1)) {
-                temp = maze.getCell(row, col + 1);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // South
-            if (isInBounds(row + 1, col) && maze.isValidCell(row + 1, col)) {
-                temp = maze.getCell(row + 1, col);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // West
-            if (isInBounds(row, col - 1) && maze.isValidCell(row, col - 1)) {
-                temp = maze.getCell(row, col - 1);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
+            for (int i = 1; i < 7; i++) {
+                node = currentNode + i;
+                if (snl[node] != 0) {
+                    node = snl[node];
+                }
+                if (!visited[node]) {
+                    // save rolls
+                    q.add(node);
+                }
             }
         }
-        return getSolution();
+        return 0;
     }
 }
