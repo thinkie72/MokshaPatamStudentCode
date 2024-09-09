@@ -19,50 +19,49 @@ public class MokshaPatam {
      *  to reach the final square on a board with the given size, ladders, and snakes.
      */
     public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
-//        Add the first node, 1, to the queue
-//        While there are still nodes left in the queue:
-//        Pop off the node at the front and visit it.
-//        If we are at the end of the graph, then we are done!
-//                Check all of the edges that extend out of this node:
-//        If any of them are unvisited, add them to the back of the queue
-        Queue<Integer> q = new LinkedList<Integer>();
-        q.add(1);
+        Queue<int[]> q = new LinkedList<int[]>();
+        q.add(new int[]{1, 0});
         boolean[] visited = new boolean[boardsize + 1];
-        int[] rolls = new int[boardsize];
         int[] snl = new int[boardsize + 1];
-        Arrays.fill(rolls, -1);
-        for (int i = 0; i < snakes[0].length; i++) {
-            for (int j = 0; j < snakes.length; j++) {
+        for (int i = 0; i < snakes.length; i++) {
+            for (int j = 0; j < snakes[0].length; j++) {
                 snl[i] = j;
             }
         }
-        for (int i = 0; i < ladders[0].length; i++) {
-            for (int j = 0; j < ladders.length; j++) {
+        for (int i = 0; i < ladders.length; i++) {
+            for (int j = 0; j < ladders[0].length; j++) {
                 snl[i] = j;
             }
         }
 
+        int[] current;
         int currentNode;
         int node;
-        int moves = 1;
+        int rolls;
         // Continues to add nodes onto the queue until one path reaches the end
         while (!q.isEmpty()) {
-            currentNode = q.remove();
+            current = q.remove();
+            currentNode = current[0];
+            rolls = current[1];
             visited[currentNode] = true;
             if (currentNode == boardsize) {
-                return rolls[0];
+                return rolls;
             }
             for (int i = 1; i < 7; i++) {
                 node = currentNode + i;
+                if (node > boardsize) {
+                    break;
+                }
                 if (snl[node] != 0) {
                     node = snl[node];
                 }
                 if (!visited[node]) {
-                    // save rolls
-                    q.add(node);
+                    visited[node] = true;
+                    q.add(new int[] {node, rolls + 1});
                 }
             }
         }
-        return 0;
+
+        return -1;
     }
 }
