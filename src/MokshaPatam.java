@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -6,70 +7,63 @@ import java.util.Queue;
  * A puzzle created by Zach Blick
  * for Adventures in Algorithms
  * at Menlo School in Atherton, CA
- *
+ * <p>
  * Completed by: Tyler Hinkie
- *
  */
 
 public class MokshaPatam {
 
-    /**
-     * TODO: Complete this function, fewestMoves(), to return the minimum number of moves
-     *  to reach the final square on a board with the given size, ladders, and snakes.
-     */
-    public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
-//        Add the first node, 1, to the queue
-//        While there are still nodes left in the queue:
-//        Pop off the node at the front and visit it.
-//        If we are at the end of the graph, then we are done!
-//                Check all of the edges that extend out of this node:
-//        If any of them are unvisited, add them to the back of the queue
-        Queue<Integer> q = new LinkedList<Integer>();
-        q.add(1);
-        int[] numRolls = new int[boardsize];
-        for (int i = 0; i < boardsize; i++) {
-            numRolls[i] = -1;
 
+    // Finds the fewest moves to reach the end of a snakes and ladders board
+    public static int fewestMoves(int boardsize, int[][] ladders, int[][] snakes) {
+        Queue<int[]> q = new LinkedList<int[]>();
+        q.add(new int[]{1, 0});
+        // Array to tell whether or not a node has been visited
+        boolean[] visited = new boolean[boardsize + 1];
+        int[] snl = new int[boardsize + 1];
+        // Initializes snakes and ladders array
+        for (int i = 0; i < snakes.length; i++) {
+            snl[snakes[i][0]] = snakes[i][1];
         }
+        for (int i = 0; i < ladders.length; i++) {
+            snl[ladders[i][0]] = ladders[i][1];
+        }
+
+        // Variables to hold the nodes and rolls for each iteration
+        int[] current;
+        int currentNode;
         int node;
-        int row;
-        int col;
-        int temp;
+        int rolls;
         // Continues to add nodes onto the queue until one path reaches the end
         while (!q.isEmpty()) {
-            node = q.remove();
-            if (node == boardsize + 1) {
-                return moves;
+            current = q.remove();
+            currentNode = current[0];
+            rolls = current[1];
+            visited[currentNode] = true;
+            // Signaling end of method by reaching the end of the board
+            if (currentNode == boardsize) {
+                return rolls;
             }
-            // North
-            if (isInBounds(row - 1, col) && maze.isValidCell(row - 1, col)) {
-                temp = maze.getCell(row - 1, col);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // East
-            if (isInBounds(row, col + 1) && maze.isValidCell(row, col + 1)) {
-                temp = maze.getCell(row, col + 1);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // South
-            if (isInBounds(row + 1, col) && maze.isValidCell(row + 1, col)) {
-                temp = maze.getCell(row + 1, col);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
-            }
-            // West
-            if (isInBounds(row, col - 1) && maze.isValidCell(row, col - 1)) {
-                temp = maze.getCell(row, col - 1);
-                temp.setExplored(true);
-                temp.setParent(cell);
-                q.add(temp);
+            // Goes backward to find the fewest number of rolls to reach the end
+            for (int i = 6; i > 0; i--) {
+                node = currentNode + i;
+                // Resets the node to avoid going past the end of the board
+                if (node > boardsize) {
+                    node = currentNode;
+                }
+                // Checks if node is the opening to a snake or ladder
+                if (snl[node] != 0) {
+                    node = snl[node];
+                }
+                // Checks if node has been visited, then adds to queue if unvisited
+                if (!visited[node]) {
+                    visited[node] = true;
+                    q.add(new int[]{node, rolls + 1});
+                }
             }
         }
-        return getSolution();
+
+        // Only if there is no possible path to the end
+        return -1;
     }
 }
